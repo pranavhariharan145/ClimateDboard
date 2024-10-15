@@ -18,6 +18,10 @@
   },
   "homepage": "https://github.com/pranavhariharan145/ClimateDboard#readme",
   "dependencies": {
-    "express": "^4.21.1"
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "morgan": "^1.10.0",
+    "node-fetch": "^3.3.2"
   }
 }
