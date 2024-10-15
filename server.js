@@ -13,7 +13,7 @@ app.use(bodyParser.json()); // Body parser for JSON requests
 
 // GET Meathod to fetch london
 app.get('/api/weather', async (req, res) => {
-  const apiKey = "74e35b620f15ff2f077b03d6d15bebba"; // Get the API key from environment variables
+  const apiKey = process.env.OPENWEATHER_API_KEY; // Key stored in .env pops up FOR SECURITY OF KEY
   const city = 'Chennai'; // Hardcoded city name for London
 
   const apiUrl = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`; // URL for OpenWeatherMap API
