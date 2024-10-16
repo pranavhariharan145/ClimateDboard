@@ -1,6 +1,8 @@
 // server.js
+"use client";
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config(); // Load environment variables
 
@@ -10,9 +12,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(morgan('dev')); // Logging middleware
 app.use(bodyParser.json()); // Body parser for JSON requests
+app.use(cors());
 
 // GET Meathod to fetch london
-// Fetch weather information for a given city (from URL)
 // Fetch weather information for a given city (from URL)
 app.get('/api/weather/:city', async (req, res) => {
     const apiKey = process.env.OPENWEATHER_API_KEY; // Get the API key from environment variables
