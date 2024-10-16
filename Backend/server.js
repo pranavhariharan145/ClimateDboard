@@ -14,7 +14,7 @@ app.use(morgan('dev')); // Logging middleware
 app.use(bodyParser.json()); // Body parser for JSON requests
 app.use(cors());
 
-// GET Meathod to fetch london
+// GET Meathod to fetch a city
 // Fetch weather information for a given city (from URL)
 app.get('/api/weather/:city', async (req, res) => {
     const apiKey = process.env.OPENWEATHER_API_KEY; // Get the API key from environment variables
