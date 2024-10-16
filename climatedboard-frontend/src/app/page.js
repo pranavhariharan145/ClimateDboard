@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 
 const WeatherPage = () => {
-  const [city, setCity] = useState(''); // State to store the user input city
-  const [weatherData, setWeatherData] = useState(null); // State to store fetched weather data
-  const [error, setError] = useState(null); // State to store error message
+  const [city, setCity] = useState('');
+  const [weatherData, setWeatherData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Function to fetch weather data for the input city
   const fetchWeatherData = async (city) => {
+    setLoading(true);
     try {
       const res = await fetch(`http://localhost:5000/api/weather/${city}`);
       if (!res.ok) {
@@ -19,79 +20,80 @@ const WeatherPage = () => {
     } catch (err) {
       setError(err.message);
     }
+    setLoading(false);
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
     if (city) {
-      fetchWeatherData(city); // Fetch weather data for the entered city
-      setError(null); // Clear any previous errors
+      fetchWeatherData(city);
+      setError(null);
     }
   };
 
   return (
-    <div>
-      <h1>Search Weather Information</h1>
-      
-      {/* Search form to input city */}
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          value={city} 
-          onChange={(e) => setCity(e.target.value)} 
-          placeholder="Enter city name" 
-          required 
+    <div className="min-h-screen bg-gray-800 flex flex-col items-center justify-center">
+      <h1 className="text-3xl font-bold mb-6">Search Weather Information</h1>
+
+      <form onSubmit={handleSubmit} className="flex flex-col text-white items-center mb-6">
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="Enter city name"
+          required
+          className="bg-gray-600 bg-opacity-50 border-2 border-none rounded-md px-4 py-2 focus:outline-none"
         />
-        <button type="submit">Search</button>
+
+
+        <button
+          type="submit"
+          className="ml-2 bg-blue-500 text-white px-3 py-1 rounded text-sm mt-2"
+        >
+          Search
+        </button>
       </form>
 
-      {/* Error handling */}
-      {error && <div>Error: {error}</div>}
-      
-      {/* Loading or weather data display */}
-      {weatherData ? (
-        <table
-          style={{
-            marginTop: '20px',
-            width: '50%',
-            borderCollapse: 'collapse', 
-            border: '2px solid white' // White border for the table
-          }}
-        >
+      {error && <div className="text-red-500">{error}</div>}
+
+      {loading ? (
+        <div>Loading weather data...</div>
+      ) : weatherData ? (
+        <table className="table-auto border-collapse border border-white mt-4 w-1/2 rounded-lg bg-gray-900 overflow-hidden">
           <thead>
             <tr>
-              <th style={{ border: '1px solid white', padding: '8px' }}>Attribute</th>
-              <th style={{ border: '1px solid white', padding: '8px' }}>Value</th>
+              <th className="border border-white px-4 py-2">Attribute</th>
+              <th className="border border-white px-4 py-2">Value</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style={{ border: '1px solid white', padding: '8px' }}>City</td>
-              <td style={{ border: '1px solid white', padding: '8px' }}>{weatherData.name}</td>
+              <td className="border border-white px-4 py-2">City</td>
+              <td className="border border-white px-4 py-2">{weatherData.name}</td>
             </tr>
             <tr>
-              <td style={{ border: '1px solid white', padding: '8px' }}>Temperature</td>
-              <td style={{ border: '1px solid white', padding: '8px' }}>{weatherData.main.temp}°C</td>
+              <td className="border border-white px-4 py-2">Temperature</td>
+              <td className="border border-white px-4 py-2">{weatherData.main.temp}°C</td>
             </tr>
             <tr>
-              <td style={{ border: '1px solid white', padding: '8px' }}>Feels Like</td>
-              <td style={{ border: '1px solid white', padding: '8px' }}>{weatherData.main.feels_like}°C</td>
+              <td className="border border-white px-4 py-2">Feels Like</td>
+              <td className="border border-white px-4 py-2">{weatherData.main.feels_like}°C</td>
             </tr>
             <tr>
-              <td style={{ border: '1px solid white', padding: '8px' }}>Humidity</td>
-              <td style={{ border: '1px solid white', padding: '8px' }}>{weatherData.main.humidity}%</td>
+              <td className="border border-white px-4 py-2">Humidity</td>
+              <td className="border border-white px-4 py-2">{weatherData.main.humidity}%</td>
             </tr>
             <tr>
-              <td style={{ border: '1px solid white', padding: '8px' }}>Weather</td>
-              <td style={{ border: '1px solid white', padding: '8px' }}>{weatherData.weather[0].description}</td>
+              <td className="border border-white px-4 py-2">Weather</td>
+              <td className="border border-white px-4 py-2">{weatherData.weather[0].description}</td>
             </tr>
             <tr>
-              <td style={{ border: '1px solid white', padding: '8px' }}>Wind Speed</td>
-              <td style={{ border: '1px solid white', padding: '8px' }}>{weatherData.wind.speed} m/s</td>
+              <td className="border border-white px-4 py-2">Wind Speed</td>
+              <td className="border border-white px-4 py-2">{weatherData.wind.speed} m/s</td>
             </tr>
           </tbody>
         </table>
+
       ) : (
         <div>Enter a city to see the weather data</div>
       )}
