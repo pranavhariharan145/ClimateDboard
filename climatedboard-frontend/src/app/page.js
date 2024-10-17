@@ -36,7 +36,7 @@ const WeatherPage = () => {
   return (
     <div className="min-h-screen bg-gray-800 flex flex-col items-center justify-start pt-10">
       
-      {/* Search box with a find logo */}
+      {/* Search box with a find logo (SVG inside the input field) */}
       <form onSubmit={handleSubmit} className="flex flex-col items-center mb-6">
         <div className="relative w-[32rem]">
           <input
@@ -48,12 +48,17 @@ const WeatherPage = () => {
             className="bg-gray-600 bg-opacity-50 border-2 border-none rounded-md px-4 py-1 w-full focus:outline-none focus:border-blue-500 text-lg"
           />
           
-          {/* Find logo image */}
-          <img 
-            src="/find-icon.png" // Replace with the path to your logo
-            alt="Find"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6"
-          />
+          {/* SVG Find (Search) Icon */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m1.85-5.15A7.5 7.5 0 1112 4.5a7.5 7.5 0 016.5 6.5z" />
+          </svg>
         </div>
       </form>
 
@@ -98,6 +103,7 @@ const WeatherPage = () => {
             </tr>
           </tbody>
         </table>
+
       ) : (
         <div></div>
       )}
