@@ -8,6 +8,7 @@ const WeatherPage = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Function to fetch weather data for the input city
   const fetchWeatherData = async (city) => {
     setLoading(true);
     try {
@@ -23,41 +24,45 @@ const WeatherPage = () => {
     setLoading(false);
   };
 
+  // Handle form submission (trigger fetch when Enter is pressed)
   const handleSubmit = (e) => {
     e.preventDefault();
     if (city) {
       fetchWeatherData(city);
-      setError(null);
+      setError(null); // Clear any previous errors
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-800 flex flex-col items-center justify-center">
-      <h1 className="text-3xl font-bold mb-6">Search Weather Information</h1>
-
-      <form onSubmit={handleSubmit} className="flex flex-col text-white items-center mb-6">
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          placeholder="Enter city name"
-          required
-          className="bg-gray-600 bg-opacity-50 border-2 border-none rounded-md px-4 py-2 focus:outline-none"
-        />
-
-
-        <button
-          type="submit"
-          className="ml-2 bg-blue-500 text-white px-3 py-1 rounded text-sm mt-2"
-        >
-          Search
-        </button>
+    <div className="min-h-screen bg-gray-800 flex flex-col items-center justify-start pt-10">
+      
+      {/* Search box with a find logo */}
+      <form onSubmit={handleSubmit} className="flex flex-col items-center mb-6">
+        <div className="relative w-[32rem]">
+          <input
+            type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Enter city name"
+            required
+            className="bg-gray-600 bg-opacity-50 border-2 border-none rounded-md px-4 py-1 w-full focus:outline-none focus:border-blue-500 text-lg"
+          />
+          
+          {/* Find logo image */}
+          <img 
+            src="/find-icon.png" // Replace with the path to your logo
+            alt="Find"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6"
+          />
+        </div>
       </form>
 
+      {/* Error handling */}
       {error && <div className="text-red-500">{error}</div>}
 
+      {/* Loading or weather data */}
       {loading ? (
-        <div>Loading weather data...</div>
+        <div className="text-white">Loading weather data...</div>
       ) : weatherData ? (
         <table className="table-auto border-collapse border border-white mt-4 w-1/2 rounded-lg bg-gray-900 overflow-hidden">
           <thead>
@@ -93,9 +98,8 @@ const WeatherPage = () => {
             </tr>
           </tbody>
         </table>
-
       ) : (
-        <div>Enter a city to see the weather data</div>
+        <div></div>
       )}
     </div>
   );
