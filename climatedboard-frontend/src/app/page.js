@@ -45,13 +45,13 @@ const WeatherPage = () => {
             onChange={(e) => setCity(e.target.value)}
             placeholder="Enter city name"
             required
-            className="bg-gray-600 bg-opacity-50 border-2 border-none rounded-md px-4 py-1 w-full focus:outline-none focus:border-blue-500 text-lg"
+            className="bg-gray-600 bg-opacity-50 border-2 border-transparent rounded-md px-4 py-1 w-full focus:outline-none focus:border-blue-500 text-lg placeholder-gray-400"
           />
           
           {/* SVG Find (Search) Icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-white"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" // Reduced size and matched placeholder color
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
