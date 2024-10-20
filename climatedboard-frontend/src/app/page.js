@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
 
 const WeatherPage = () => {
@@ -8,12 +8,29 @@ const WeatherPage = () => {
   const [loading, setLoading] = useState(false);
   const [newsData, setNewsData] = useState([]); // State to hold news articles
   const [expandedArticleIndex, setExpandedArticleIndex] = useState(null); // State to track the expanded article
+  const [locationAllowed, setLocationAllowed] = useState(false); // Track if location is allowed
 
-  // Function to fetch weather data for the input city
-  const fetchWeatherData = async (city) => {
+  // Function to fetch weather data by city name
+  const fetchWeatherDataByCity = async (city) => {
     setLoading(true);
     try {
       const res = await fetch(`http://localhost:5000/api/weather/${city}`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch weather data');
+      }
+      const data = await res.json();
+      setWeatherData(data);
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  // Function to fetch weather data by geolocation (latitude and longitude)
+  const fetchWeatherDataByCoordinates = async (lat, lon) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/weather?lat=${lat}&lon=${lon}`);
       if (!res.ok) {
         throw new Error('Failed to fetch weather data');
       }
@@ -42,13 +59,30 @@ const WeatherPage = () => {
   // Fetch news data when the component mounts
   useEffect(() => {
     fetchNewsData();
+
+    // Get user's current location using Geolocation API
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          fetchWeatherDataByCoordinates(latitude, longitude); // Fetch weather by coordinates
+          setLocationAllowed(true); // Set location allowed to true
+        },
+        (error) => {
+          setError('Failed to retrieve location');
+          console.error(error);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by this browser.');
+    }
   }, []);
 
   // Handle form submission (trigger fetch when Enter is pressed)
   const handleSubmit = (e) => {
     e.preventDefault();
     if (city) {
-      fetchWeatherData(city);
+      fetchWeatherDataByCity(city);
       setError(null); // Clear any previous errors
     }
   };
@@ -62,13 +96,14 @@ const WeatherPage = () => {
     <div className="min-h-screen bg-gray-800 flex flex-row items-start justify-center pt-10">
       {/* Weather Section */}
       <div className="flex-grow flex flex-col items-center mb-6 w-1/2 p-4">
+        {/* Form to enter city name */}
         <form onSubmit={handleSubmit} className="flex flex-col items-center mb-6 w-full">
           <div className="relative w-full">
             <input
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              placeholder="Enter a City"
+              placeholder="My Location"
               required
               className="bg-gray-600 bg-opacity-50 border-2 border-transparent rounded-md px-5 py-0.5 w-full focus:outline-none focus:border-blue-500 text-lg placeholder-gray-400"
             />
@@ -127,12 +162,13 @@ const WeatherPage = () => {
               </tr>
             </tbody>
           </table>
+        ) : locationAllowed ? (
+          <div className="text-white">Fetching weather for your location...</div>
         ) : (
-          <div></div>
+          <div className="text-white">Please enter a city or allow location access.</div>
         )}
       </div>
 
-      {/* News section */}
       {/* News section */}
       <div className="w-1/2 h-[90vh] bg-gray-700 overflow-y-scroll rounded-lg p-4">
         <h2 className="text-white text-lg font-semibold mb-4">Climate News</h2>
@@ -169,7 +205,6 @@ const WeatherPage = () => {
                 </a>
               )}
 
-              {/* Always visible Visit full article button */}
               {article.url && (
                 <a
                   href={article.url}
@@ -186,8 +221,6 @@ const WeatherPage = () => {
           <div className="text-gray-400">No news available</div>
         )}
       </div>
-
-
     </div>
   );
 };
