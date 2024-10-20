@@ -128,40 +128,60 @@ const WeatherPage = () => {
         {loading ? (
           <div className="text-white">Loading weather data...</div>
         ) : weatherData ? (
-          <table className="table-auto border-collapse border border-white mt-4 w-full rounded-lg bg-gray-900 overflow-hidden">
-            <thead>
-              <tr>
-                <th className="border border-white px-4 py-2">Attribute</th>
-                <th className="border border-white px-4 py-2">Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border border-white px-4 py-2">City</td>
-                <td className="border border-white px-4 py-2">{weatherData.name}</td>
-              </tr>
-              <tr>
-                <td className="border border-white px-4 py-2">Temperature</td>
-                <td className="border border-white px-4 py-2">{weatherData.main.temp}°C</td>
-              </tr>
-              <tr>
-                <td className="border border-white px-4 py-2">Feels Like</td>
-                <td className="border border-white px-4 py-2">{weatherData.main.feels_like}°C</td>
-              </tr>
-              <tr>
-                <td className="border border-white px-4 py-2">Humidity</td>
-                <td className="border border-white px-4 py-2">{weatherData.main.humidity}%</td>
-              </tr>
-              <tr>
-                <td className="border border-white px-4 py-2">Weather</td>
-                <td className="border border-white px-4 py-2">{weatherData.weather[0].description}</td>
-              </tr>
-              <tr>
-                <td className="border border-white px-4 py-2">Wind Speed</td>
-                <td className="border border-white px-4 py-2">{weatherData.wind.speed} m/s</td>
-              </tr>
-            </tbody>
-          </table>
+          <>
+            <table className="table-auto border-collapse border border-white mt-4 w-full rounded-lg bg-gray-900 overflow-hidden">
+              <thead>
+                <tr>
+                  <th className="border border-white px-4 py-2">Attribute</th>
+                  <th className="border border-white px-4 py-2">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-white px-4 py-2">City</td>
+                  <td className="border border-white px-4 py-2">{weatherData.name}</td>
+                </tr>
+                <tr>
+                  <td className="border border-white px-4 py-2">Temperature</td>
+                  <td className="border border-white px-4 py-2">{weatherData.main.temp}°C</td>
+                </tr>
+                <tr>
+                  <td className="border border-white px-4 py-2">Feels Like</td>
+                  <td className="border border-white px-4 py-2">{weatherData.main.feels_like}°C</td>
+                </tr>
+                <tr>
+                  <td className="border border-white px-4 py-2">Humidity</td>
+                  <td className="border border-white px-4 py-2">{weatherData.main.humidity}%</td>
+                </tr>
+                <tr>
+                  <td className="border border-white px-4 py-2">Weather</td>
+                  <td className="border border-white px-4 py-2">{weatherData.weather[0].description}</td>
+                </tr>
+                <tr>
+                  <td className="border border-white px-4 py-2">Wind Speed</td>
+                  <td className="border border-white px-4 py-2">{weatherData.wind.speed} m/s</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* New Div for Weather Summary */}
+            <div className="mt-4 bg-gray-700 rounded-lg p-4 w-full">
+              <div className="flex">
+                {/* Left Section */}
+                <div className="flex-grow p-4">
+                  <p className="text-gray-300">{weatherData.weather[0].description}</p>
+                  <p className="text-gray-300 text-7xl">{weatherData.main.temp}°C</p>
+                  <p className="text-gray-300">{weatherData.main.humidity}%</p>
+                </div>
+
+                {/* Right Section */}
+                <div className="w-1/2 p-4 border-l border-gray-600">
+                  <h3 className="text-white font-semibold"></h3>
+                  <p className="text-gray-300">{weatherData.name}</p>
+                </div>
+              </div>
+            </div>
+          </>
         ) : locationAllowed ? (
           <div className="text-white">Fetching weather for your location...</div>
         ) : (
