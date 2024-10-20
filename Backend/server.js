@@ -15,6 +15,35 @@ app.use(morgan('dev')); // Logging middleware
 app.use(bodyParser.json()); // Body parser for JSON requests
 app.use(cors());
 
+// Fetch weather information for given coordinates (latitude & longitude)
+app.get('/api/weather', async (req, res) => {
+  const apiKey = process.env.OPENWEATHER_API_KEY; // Get the OpenWeather API key from environment variables
+  const { lat, lon } = req.query; // Extract latitude and longitude from the query parameters
+
+  if (!lat || !lon) {
+    return res.status(400).json({ message: 'Latitude and longitude are required' }); // Error if lat or lon are missing
+  }
+
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`; // OpenWeather API URL for coordinates
+
+  try {
+    const fetch = (await import('node-fetch')).default; // Use dynamic import for node-fetch
+    const response = await fetch(apiUrl); // Fetch the weather data using coordinates
+
+    if (!response.ok) {
+      console.error('Response Status:', response.status, response.statusText);
+      throw new Error('Failed to fetch weather data');
+    }
+
+    const weatherData = await response.json(); // Parse the JSON response
+    res.status(200).json(weatherData); // Send the weather data as JSON
+  } catch (error) {
+    console.error('Error fetching weather data:', error); // Log any error
+    res.status(500).json({ message: 'Error fetching weather data', error: error.message }); // Send error response
+  }
+});
+
+
 // Fetch weather information for a given city (from URL)
 app.get('/api/weather/:city', async (req, res) => {
     const apiKey = process.env.OPENWEATHER_API_KEY; // Get the API key from environment variables
