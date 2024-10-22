@@ -9,22 +9,58 @@ const WeatherPage = () => {
   const [newsData, setNewsData] = useState([]); // State to hold news articles
   const [expandedArticleIndex, setExpandedArticleIndex] = useState(null); // State to track the expanded article
   const [locationAllowed, setLocationAllowed] = useState(false); // Track if location is allowed
+  const [cityTime, setCityTime] = useState(null); // State to hold city time
 
-  // Function to fetch weather data by city name
-  const fetchWeatherDataByCity = async (city) => {
-    setLoading(true);
+
+
+  const fetchCityTime = async (city) => {
+    console.log("Fetching time for city:", city); // Log the city being fetched
     try {
-      const res = await fetch(`http://localhost:5000/api/weather/${city}`);
+      const res = await fetch(`http://localhost:5000/api/time/${city}`);
       if (!res.ok) {
-        throw new Error('Failed to fetch weather data');
+        throw new Error('Failed to fetch time');
       }
       const data = await res.json();
-      setWeatherData(data);
+      console.log('Time data received:', data); // Log the received data
+      if (data && data.currentTime) {
+        const currentTime = new Date(data.currentTime); // Parse the time
+  
+        // Get time in 24-hour format (HH:MM)
+        const formattedTime = currentTime.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false, // 24-hour format
+        });
+  
+        // Get the day of the week (e.g., "Monday")
+        const options = { weekday: 'long' };
+        const dayOfWeek = currentTime.toLocaleDateString([], options);
+  
+        // Get today's date in MM-DD format
+        const month = String(currentTime.getMonth() + 1).padStart(2, '0'); 
+        const day = String(currentTime.getDate()).padStart(2, '0'); 
+        const formattedDate = `${month}-${day}`; // MM-DD format
+  
+        // Set both the time and the date
+        setCityTime({
+          time: formattedTime,
+          dayAndDate: `${dayOfWeek}   ${formattedDate}`, // Combine day and formatted date
+        });
+      } else {
+        setCityTime({
+          time: 'Time data not available',
+          dayAndDate: '',
+        });
+      }
     } catch (err) {
-      setError(err.message);
+      console.error('Error fetching time:', err);
+      setCityTime({
+        time: 'Failed to fetch time',
+        dayAndDate: '',
+      });
     }
-    setLoading(false);
   };
+  
 
   // Function to fetch weather data by geolocation (latitude and longitude)
   const fetchWeatherDataByCoordinates = async (lat, lon) => {
@@ -36,6 +72,7 @@ const WeatherPage = () => {
       }
       const data = await res.json();
       setWeatherData(data);
+      fetchCityTime(data.name); // Fetch the city's time by its name
     } catch (err) {
       setError(err.message);
     }
@@ -85,6 +122,23 @@ const WeatherPage = () => {
       fetchWeatherDataByCity(city);
       setError(null); // Clear any previous errors
     }
+  };
+  // Function to fetch weather data by city name
+  const fetchWeatherDataByCity = async (city) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/weather/${city}`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch weather data');
+      }
+      const data = await res.json();
+      setWeatherData(data);
+      console.log(`Fetched weather data for: ${data.name}`); // Log city name from weather data
+      fetchCityTime(data.name); // Fetch the city's time
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
   };
 
   // Toggle expand/collapse of the article
@@ -169,16 +223,32 @@ const WeatherPage = () => {
               <div className="flex">
                 {/* Left Section */}
                 <div className="flex-grow p-4">
-                  <p className="text-gray-300">{weatherData.weather[0].description}</p>
-                  <p className="text-gray-300 text-7xl">{weatherData.main.temp}°C</p>
-                  <p className="text-gray-300">{weatherData.main.humidity}%</p>
+                  <p className="text-gray-300 text-2xl">{weatherData.weather[0].description}</p>
+                  <p className="text-gray-300 text-8xl">{weatherData.main.temp}°C</p>
+                  <p className="text-gray-300 text-2xl">{weatherData.main.humidity}%</p>
                 </div>
 
+
                 {/* Right Section */}
-                <div className="w-1/2 p-4 border-l border-gray-600">
-                  <h3 className="text-white font-semibold"></h3>
-                  <p className="text-gray-300">{weatherData.name}</p>
+                <div className="w-1/2 p-4 border-l border-gray-600 flex flex-col items-end text-right">
+                  {/* Time */}
+                  <h3 className="text-gray-300 text-2xl">
+                    {cityTime?.time ? cityTime.time : 'Fetching time...'}
+                  </h3>
+
+                  {/* Day and Date */}
+                  <p className="text-gray-300 text-2xl">
+                    {cityTime?.dayAndDate ? cityTime.dayAndDate : ''}
+                  </p>
+
+                  {/* City Name */}
+                  <p className="mt-auto text-gray-300 text-2xl">
+                    {weatherData.name}
+                  </p>
                 </div>
+
+
+
               </div>
             </div>
           </>
