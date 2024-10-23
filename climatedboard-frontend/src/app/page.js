@@ -14,7 +14,6 @@ const WeatherPage = () => {
 
 
   const fetchCityTime = async (city) => {
-    console.log("Fetching time for city:", city); // Log the city being fetched
     try {
       const res = await fetch(`http://localhost:5000/api/time/${city}`);
       if (!res.ok) {
@@ -25,18 +24,18 @@ const WeatherPage = () => {
       if (data && data.currentTime) {
         const currentTime = new Date(data.currentTime); // Parse the time
   
-        // Get time in 24-hour format (HH:MM)
+        // 24-hour format (HH:MM)
         const formattedTime = currentTime.toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
-          hour12: false, // 24-hour format
+          hour12: false,
         });
   
-        // Get the day of the week (e.g., "Monday")
+        // Day
         const options = { weekday: 'long' };
         const dayOfWeek = currentTime.toLocaleDateString([], options);
   
-        // Get today's date in MM-DD format
+        // date in MM-DD format
         const month = String(currentTime.getMonth() + 1).padStart(2, '0'); 
         const day = String(currentTime.getDate()).padStart(2, '0'); 
         const formattedDate = `${month}-${day}`; // MM-DD format
@@ -62,7 +61,7 @@ const WeatherPage = () => {
   };
   
 
-  // Function to fetch weather data by geolocation (latitude and longitude)
+  // fetch weather data by geolocation (latitude and longitude)
   const fetchWeatherDataByCoordinates = async (lat, lon) => {
     setLoading(true);
     try {
@@ -79,7 +78,7 @@ const WeatherPage = () => {
     setLoading(false);
   };
 
-  // Function to fetch news data
+  // fetch news data
   const fetchNewsData = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/news');
@@ -97,7 +96,7 @@ const WeatherPage = () => {
   useEffect(() => {
     fetchNewsData();
 
-    // Get user's current location using Geolocation API
+    // user's current location using Geolocation API
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -115,15 +114,15 @@ const WeatherPage = () => {
     }
   }, []);
 
-  // Handle form submission (trigger fetch when Enter is pressed)
+  // (trigger fetch when Enter is pressed)
   const handleSubmit = (e) => {
     e.preventDefault();
     if (city) {
       fetchWeatherDataByCity(city);
-      setError(null); // Clear any previous errors
+      setError(null); 
     }
   };
-  // Function to fetch weather data by city name
+  // fetch weather data by city name
   const fetchWeatherDataByCity = async (city) => {
     setLoading(true);
     try {
@@ -183,40 +182,7 @@ const WeatherPage = () => {
           <div className="text-white">Loading weather data...</div>
         ) : weatherData ? (
           <>
-            <table className="table-auto border-collapse border border-white mt-4 w-full rounded-lg bg-gray-900 overflow-hidden">
-              <thead>
-                <tr>
-                  <th className="border border-white px-4 py-2">Attribute</th>
-                  <th className="border border-white px-4 py-2">Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-white px-4 py-2">City</td>
-                  <td className="border border-white px-4 py-2">{weatherData.name}</td>
-                </tr>
-                <tr>
-                  <td className="border border-white px-4 py-2">Temperature</td>
-                  <td className="border border-white px-4 py-2">{weatherData.main.temp}°C</td>
-                </tr>
-                <tr>
-                  <td className="border border-white px-4 py-2">Feels Like</td>
-                  <td className="border border-white px-4 py-2">{weatherData.main.feels_like}°C</td>
-                </tr>
-                <tr>
-                  <td className="border border-white px-4 py-2">Humidity</td>
-                  <td className="border border-white px-4 py-2">{weatherData.main.humidity}%</td>
-                </tr>
-                <tr>
-                  <td className="border border-white px-4 py-2">Weather</td>
-                  <td className="border border-white px-4 py-2">{weatherData.weather[0].description}</td>
-                </tr>
-                <tr>
-                  <td className="border border-white px-4 py-2">Wind Speed</td>
-                  <td className="border border-white px-4 py-2">{weatherData.wind.speed} m/s</td>
-                </tr>
-              </tbody>
-            </table>
+            
 
             {/* New Div for Weather Summary */}
             <div className="mt-4 bg-gray-700 rounded-lg p-4 w-full">
