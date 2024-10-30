@@ -23,23 +23,23 @@ const WeatherPage = () => {
       console.log('Time data received:', data); // Log the received data
       if (data && data.currentTime) {
         const currentTime = new Date(data.currentTime); // Parse the time
-  
+
         // 24-hour format (HH:MM)
         const formattedTime = currentTime.toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
           hour12: false,
         });
-  
+
         // Day
         const options = { weekday: 'long' };
         const dayOfWeek = currentTime.toLocaleDateString([], options);
-  
+
         // date in MM-DD format
-        const month = String(currentTime.getMonth() + 1).padStart(2, '0'); 
-        const day = String(currentTime.getDate()).padStart(2, '0'); 
+        const month = String(currentTime.getMonth() + 1).padStart(2, '0');
+        const day = String(currentTime.getDate()).padStart(2, '0');
         const formattedDate = `${month}-${day}`; // MM-DD format
-  
+
         // Set both the time and the date
         setCityTime({
           time: formattedTime,
@@ -59,7 +59,7 @@ const WeatherPage = () => {
       });
     }
   };
-  
+
 
   // fetch weather data by geolocation (latitude and longitude)
   const fetchWeatherDataByCoordinates = async (lat, lon) => {
@@ -119,7 +119,7 @@ const WeatherPage = () => {
     e.preventDefault();
     if (city) {
       fetchWeatherDataByCity(city);
-      setError(null); 
+      setError(null);
     }
   };
   // fetch weather data by city name
@@ -152,15 +152,29 @@ const WeatherPage = () => {
         {/* Form to enter city name */}
         <form onSubmit={handleSubmit} className="flex flex-col items-center mb-6 w-full">
           <div className="relative w-full">
+            {/* SVG Location Pin Icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s8-7.33 8-12a8 8 0 1 0-16 0c0 4.67 8 12 8 12z" />
+              <circle cx="12" cy="9" r="3" />
+            </svg>
+
             <input
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="My Location"
               required
-              className="bg-gray-600 bg-opacity-50 border-2 border-transparent rounded-md px-5 py-0.5 w-full focus:outline-none focus:border-blue-500 text-lg placeholder-gray-400"
+              className="bg-gray-600 bg-opacity-50 border-2 border-transparent rounded-md px-10 py-0.5 w-full focus:outline-none focus:border-blue-500 text-lg placeholder-gray-400"
             />
-            {/* SVG Find (Search) Icon */}
+
+            {/* SVG Search Icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -178,106 +192,110 @@ const WeatherPage = () => {
         {error && <div className="text-red-500">{error}</div>}
 
         {/* Loading or weather data */}
-        {loading ? (
-          <div className="text-white">Loading weather data...</div>
-        ) : weatherData ? (
-          <>
-            
+        {
+          loading ? (
+            <div className="text-white">Loading weather data...</div>
+          ) : weatherData ? (
+            <>
 
-            {/* New Div for Weather Summary */}
-            <div className="mt-4 bg-gray-700 rounded-lg p-4 w-full">
-              <div className="flex">
-                {/* Left Section */}
-                <div className="flex-grow p-4">
-                  <p className="text-gray-300 text-2xl">{weatherData.weather[0].description}</p>
-                  <p className="text-gray-300 text-8xl">{weatherData.main.temp}°C</p>
-                  <p className="text-gray-300 text-2xl">{weatherData.main.humidity}%</p>
+
+              {/* New Div for Weather Summary */}
+              <div className="mt-4 bg-gray-700 rounded-lg p-4 w-full">
+                <div className="flex">
+                  {/* Left Section */}
+                  <div className="flex-grow p-4">
+                    <p className="text-gray-300 text-2xl">{weatherData.weather[0].description}</p>
+                    <p className="text-gray-300 text-8xl">{weatherData.main.temp}°C</p>
+                    <p className="text-gray-300 text-2xl">{weatherData.main.humidity}%</p>
+                  </div>
+
+
+                  {/* Right Section */}
+                  <div className="w-1/2 p-4 border-l border-gray-600 flex flex-col items-end text-right">
+                    {/* Time */}
+                    <h3 className="text-gray-300 text-2xl">
+                      {cityTime?.time ? cityTime.time : 'Fetching time...'}
+                    </h3>
+
+                    {/* Day and Date */}
+                    <p className="text-gray-300 text-2xl">
+                      {cityTime?.dayAndDate ? cityTime.dayAndDate : ''}
+                    </p>
+
+                    {/* City Name */}
+                    <p className="mt-auto text-gray-300 text-2xl">
+                      {weatherData.name}
+                    </p>
+                  </div>
+
+
+
                 </div>
-
-
-                {/* Right Section */}
-                <div className="w-1/2 p-4 border-l border-gray-600 flex flex-col items-end text-right">
-                  {/* Time */}
-                  <h3 className="text-gray-300 text-2xl">
-                    {cityTime?.time ? cityTime.time : 'Fetching time...'}
-                  </h3>
-
-                  {/* Day and Date */}
-                  <p className="text-gray-300 text-2xl">
-                    {cityTime?.dayAndDate ? cityTime.dayAndDate : ''}
-                  </p>
-
-                  {/* City Name */}
-                  <p className="mt-auto text-gray-300 text-2xl">
-                    {weatherData.name}
-                  </p>
-                </div>
-
-
-
               </div>
-            </div>
-          </>
-        ) : locationAllowed ? (
-          <div className="text-white">Fetching weather for your location...</div>
-        ) : (
-          <div className="text-white">Please enter a city or allow location access.</div>
-        )}
-      </div>
+            </>
+          ) : locationAllowed ? (
+            <div className="text-white">Fetching weather for your location...</div>
+          ) : (
+            <div className="text-white">Please enter a city or allow location access.</div>
+          )
+        }
+      </div >
 
       {/* News section */}
-      <div className="w-1/2 h-[90vh] bg-gray-700 overflow-y-scroll rounded-lg p-4">
+      < div className="w-1/2 h-[90vh] bg-gray-700 overflow-y-scroll rounded-lg p-4" >
         <h2 className="text-white text-lg font-semibold mb-4">Climate News</h2>
-        {newsData.length > 0 ? (
-          newsData.map((article, index) => (
-            <div key={index} className="mb-4 p-2 bg-gray-600 rounded flex flex-col">
-              <h3 className="text-white font-bold">{article.title}</h3>
-              <p className="text-gray-300 text-sm">{article.description}</p>
+        {
+          newsData.length > 0 ? (
+            newsData.map((article, index) => (
+              <div key={index} className="mb-4 p-2 bg-gray-600 rounded flex flex-col">
+                <h3 className="text-white font-bold">{article.title}</h3>
+                <p className="text-gray-300 text-sm">{article.description}</p>
 
-              {expandedArticleIndex === index ? (
-                <div className="mt-2 text-gray-300 text-sm">
-                  <p>{article.content ? article.content : 'Content not available.'}</p>
+                {expandedArticleIndex === index ? (
+                  <div className="mt-2 text-gray-300 text-sm">
+                    <p>{article.content ? article.content : 'Content not available.'}</p>
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault(); // Prevent default link behavior
+                        toggleArticle(index); // Collapse the article
+                      }}
+                      className="text-blue-400 text-sm cursor-pointer mt-2"
+                    >
+                      Read less
+                    </a>
+                  </div>
+                ) : (
                   <a
                     href="#"
                     onClick={(e) => {
                       e.preventDefault(); // Prevent default link behavior
-                      toggleArticle(index); // Collapse the article
+                      toggleArticle(index); // Expand the article
                     }}
+                    className="text-blue-400 text-sm cursor-pointer"
+                  >
+                    Read more
+                  </a>
+                )}
+
+                {article.url && (
+                  <a
+                    href={article.url}
+                    target="_blank" // Open in new tab
+                    rel="noopener noreferrer"
                     className="text-blue-400 text-sm cursor-pointer mt-2"
                   >
-                    Read less
+                    Visit full article
                   </a>
-                </div>
-              ) : (
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault(); // Prevent default link behavior
-                    toggleArticle(index); // Expand the article
-                  }}
-                  className="text-blue-400 text-sm cursor-pointer"
-                >
-                  Read more
-                </a>
-              )}
-
-              {article.url && (
-                <a
-                  href={article.url}
-                  target="_blank" // Open in new tab
-                  rel="noopener noreferrer"
-                  className="text-blue-400 text-sm cursor-pointer mt-2"
-                >
-                  Visit full article
-                </a>
-              )}
-            </div>
-          ))
-        ) : (
-          <div className="text-gray-400">No news available</div>
-        )}
-      </div>
-    </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-400">No news available</div>
+          )
+        }
+      </div >
+    </div >
   );
 };
 
